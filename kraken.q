@@ -43,4 +43,4 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
 / Open & Confirm Connections
 w:(hsym `$host) header;
 
-$[first h>0; -1 "AlphaKDB: Connection Success. Handle: ",first string h 0; -1 "AlphaKDB: Connection Failed"];
+$[first w>0; -1 "AlphaKDB: Connection Success. Handle: ",first string w 0; -1 "AlphaKDB: Connection Failed"];

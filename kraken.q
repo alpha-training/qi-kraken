@@ -1,5 +1,5 @@
 / Import libraries
-/.qi.import`ipc
+.qi.import`ipc
 
 / Table Schema
 trade:flip `time`sym`open`high`low`close`vwap`volume!"psffffff"$\:();

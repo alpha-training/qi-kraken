@@ -1,5 +1,5 @@
 / Import libraries
-.qi.import`ipc
+/.qi.import`ipc
 
 / Table Schema
 trade:flip `time`sym`open`high`low`close`vwap`volume!"psffffff"$\:();
@@ -15,7 +15,7 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
 
 / Kraken Data Handler
 .kraken.start:{[tp]
-    .z.ws:{[msg]
+    .z.ws:{[msg;tp]
         package:.j.k msg;
         {if[`channel in key x;
             if[x[`channel] like "status";
@@ -28,7 +28,7 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
             d:@[d;`symbol;`$];
             d[`timestamp]:-1_'d[`timestamp];
             d:@[d;`timestamp;"P"$];
-            neg[.ipc.conn tp](`.u.upd;`$x[`channel];
+            neg[.ipc.conn y](`.u.upd;`$x[`channel];
                 (d`timestamp;
                 d`symbol;
                 d`open;
@@ -39,8 +39,8 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
                 d`volume)
                 );
             ]
-            } each enlist package
-        };
+            }[;tp] each enlist package
+        }[;tp];
 
     / Open & Confirm Connections
     w:(hsym `$host) header;

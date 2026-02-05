@@ -15,7 +15,8 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
 
 / Kraken Data Handler
 .kraken.start:{[tp]
-    .z.ws:{[msg;tp]
+    kraken.proc::tp;
+    .z.ws:{[msg]
         package:.j.k msg;
         {if[`channel in key x;
             if[x[`channel] like "status";
@@ -28,7 +29,7 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
             d:@[d;`symbol;`$];
             d[`timestamp]:-1_'d[`timestamp];
             d:@[d;`timestamp;"P"$];
-            neg[.ipc.conn y](`.u.upd;`$x[`channel];
+            neg[.ipc.conn kraken.proc](`.u.upd;`$x[`channel];
                 (d`timestamp;
                 d`symbol;
                 d`open;
@@ -39,8 +40,8 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
                 d`volume)
                 );
             ]
-            }[;tp] each enlist package
-        }[;tp];
+            } each enlist package
+        };
 
     / Open & Confirm Connections
     w:(hsym `$host) header;

@@ -42,7 +42,7 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
             } each enlist package
         }
 
-/ Open & Confirm Connections
+    / Open & Confirm Connections
     w:(hsym `$host) header;
     -1 "qi-kraken v0.1: Connection sequence initiated..."
-}
+    }

@@ -21,9 +21,9 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
             if[x[`channel] like "status";
                 -1 "qi.kraken: Status received. System is ", first x[`data]`system;
                 :neg[.z.w] .j.j payload];
-        
+            
             if[x[`channel] like "heartbeat";:(::)];
-        
+            
             d:x[`data];
             d:@[d;`symbol;`$];
             d[`timestamp]:-1_'d[`timestamp];
@@ -40,9 +40,10 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
                 );
             ]
             } each enlist package
-        }
+        };
 
     / Open & Confirm Connections
     w:(hsym `$host) header;
-    -1 "qi-kraken v0.1: Connection sequence initiated..."
+
+    -1 "qi-kraken v0.1: Connection sequence initiated...";
     }

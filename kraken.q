@@ -1,5 +1,6 @@
 \e 1
-/h:hopen 7010
+.qi.import`ipc
+
 / Table Schema
 trade:flip `time`sym`open`high`low`close`vwap`volume!"psffffff"$\:();
 
@@ -13,34 +14,35 @@ payload:`method`params!("subscribe";`channel`symbol`interval!("ohlc";currencies;
 ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies))
 
 / Kraken Data Handler
-.z.ws:{[msg]
-    package:.j.k msg;
-    {if[`channel in key x;
-        if[x[`channel] like "status";
-            -1 "qi.kraken: Status received. System is ", first x[`data]`system;
-            :neg[.z.w] .j.j payload];
+.kraken.start:{[tpport]
+    .z.ws:{[msg]
+        package:.j.k msg;
+        {if[`channel in key x;
+            if[x[`channel] like "status";
+                -1 "qi.kraken: Status received. System is ", first x[`data]`system;
+                :neg[.z.w] .j.j payload];
         
-        if[x[`channel] like "heartbeat";:(::)];
+            if[x[`channel] like "heartbeat";:(::)];
         
-        d:x[`data];
-        d:@[d;`symbol;`$];
-        d[`timestamp]:-1_'d[`timestamp];
-        d:@[d;`timestamp;"P"$];
-        neg[.ipc.conn`tp0](`.u.upd;`$x[`channel];
-            (d`timestamp;
-            d`symbol;
-            d`open;
-            d`high;
-            d`low;
-            d`close;
-            d`vwap;
-            d`volume)
-            );
-        ]
-        } each enlist package
-    }
+            d:x[`data];
+            d:@[d;`symbol;`$];
+            d[`timestamp]:-1_'d[`timestamp];
+            d:@[d;`timestamp;"P"$];
+            neg[.ipc.conn`tp0](`.u.upd;`$x[`channel];
+                (d`timestamp;
+                d`symbol;
+                d`open;
+                d`high;
+                d`low;
+                d`close;
+                d`vwap;
+                d`volume)
+                );
+            ]
+            } each enlist package
+        }
 
 / Open & Confirm Connections
-w:(hsym `$host) header;
-
-$[first w>0; -1 "AlphaKDB: Connection Success. Handle: ",first string w 0; -1 "AlphaKDB: Connection Failed"];
+    w:(hsym `$host) header;
+    -1 "qi-kraken v0.1: Connection sequence initiated..."
+}

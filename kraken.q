@@ -1,4 +1,4 @@
-\e 1
+/ Import libraries
 .qi.import`ipc
 
 / Table Schema
@@ -14,7 +14,7 @@ payload:`method`params!("subscribe";`channel`symbol`interval!("ohlc";currencies;
 ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies))
 
 / Kraken Data Handler
-.kraken.start:{[tpport]
+.kraken.start:{[tp]
     .z.ws:{[msg]
         package:.j.k msg;
         {if[`channel in key x;
@@ -28,7 +28,7 @@ ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies)
             d:@[d;`symbol;`$];
             d[`timestamp]:-1_'d[`timestamp];
             d:@[d;`timestamp;"P"$];
-            neg[.ipc.conn tpport](`.u.upd;`$x[`channel];
+            neg[.ipc.conn tp](`.u.upd;`$x[`channel];
                 (d`timestamp;
                 d`symbol;
                 d`open;

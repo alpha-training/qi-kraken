@@ -6,8 +6,8 @@ trade:flip `time`sym`open`high`low`close`vwap`volume!"psffffff"$\:();
 
 / Connection Logic
 host:":wss://ws.kraken.com:443";
-path:"/v2";
-header:"GET ",path," HTTP/1.1\r\nHost: ws.kraken.com\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n"
+krpath:"/v2";
+header:"GET ",krpath," HTTP/1.1\r\nHost: ws.kraken.com\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n"
 currencies:("BTC/USD";"ETH/USD")
 interval:1
 payload:`method`params!("subscribe";`channel`symbol`interval!("ohlc";currencies;interval))

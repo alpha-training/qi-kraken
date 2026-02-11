@@ -2,8 +2,7 @@
 
 norm.OHLC:{
     d:@[x;`symbol;`$];
-    d[`timestamp]:-1_'d[`timestamp];
-    d:@[d;`timestamp;"N"$];
+    d[`timestamp]:"N"$-1_'d[`timestamp];
         (d`timestamp;
                 d`symbol;
                 d`open;

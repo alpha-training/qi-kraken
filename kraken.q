@@ -13,7 +13,7 @@
 \d .kraken
 
 / Connection Logic
-url:":wss://ws.kraken.com:443";
+url:`$":wss://ws.kraken.com:443";
 l:"/v2";
 header:"GET ",l," HTTP/1.1\r\nHost: ws.kraken.com\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n"
 currencies:("BTC/USD";"ETH/USD")
@@ -32,7 +32,7 @@ H:0Ni;
             -1 "qi.kraken: Status received. System is ", first x[`data]`system;
             :neg[.z.w] .j.j payload];
         if[x[`channel] like "ohlc";
-            :neg[H](`.u.upd;`$x[`channel];norm.OHLC x[`data])]
+            :neg[H](`.u.upd;`$x[`channel];nn:norm.OHLC x[`data])]
         ];
         }each enlist pkg
     }
@@ -41,5 +41,11 @@ start:{[target]
     if[null H::.ipc.conn .qi.tosym target;
         if[null H::first c:.ipc.tryconnect target;
             .log.fatal"Could not connect to ",.qi.tostr[target]," '",last[c],"'. Exiting"]];
-    w:(hsym `$url) header;
+    .log.info "Connection sequence initiated...";
+    if[not h:first c:.qi.try[url;header;0Ni];
+        .log.error err:c 2;
+        if[err like"*Protocol*";
+            if[.z.o in`l64`m64;
+                .log.info"Try setting the env variable:\nexport SSL_VERIFY_SERVER=NO"]]];
+    if[h;.log.info"Connection success"];
     }

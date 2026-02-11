@@ -34,7 +34,7 @@ H:0Ni;
             -1 "qi.kraken: Status received. System is ", first x[`data]`system;
             :neg[.z.w] .j.j payload];
         if[x[`channel] like CHANNEL;
-            :neg[H](`.u.upd;`$x[`channel];.kraken.norm.[`$CHANNEL] x[`data])]
+            :neg[H](`.u.upd;`$x[`channel];.kraken.norm[`$CHANNEL] x[`data])]
         ];
         }each enlist pkg
     }

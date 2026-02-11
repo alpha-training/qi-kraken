@@ -1,0 +1,13 @@
+time,p
+sym,s
+bid,f
+bid_qty,f
+ask,f
+ask_qty,f
+last,f
+volume,f
+vwap,f
+low,f
+high,f
+change,f
+change_pct,f

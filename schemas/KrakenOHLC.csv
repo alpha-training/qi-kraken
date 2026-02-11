@@ -4,5 +4,8 @@ open,f
 high,f
 low,f
 close,f
-vwap,f
+trades,j
 volume,f
+vwap,f
+interval_begin,p
+interval,j

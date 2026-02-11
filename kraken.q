@@ -5,21 +5,23 @@
 .qi.import`log
 .qi.frompkg[`kraken;`norm]
 
-/ Table Schema
-/ trade:flip `time`sym`open`high`low`close`vwap`volume!"psffffff"$\:();
-
 / export SSL_CA_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt
 
 \d .kraken
 
 / Connection Logic
-url:`$":wss://ws.kraken.com:443";
-l:"/v2";
-header:"GET ",l," HTTP/1.1\r\nHost: ws.kraken.com\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n"
-currencies:("BTC/USD";"ETH/USD")
-interval:1
-payload:`method`params!("subscribe";`channel`symbol`interval!("ohlc";currencies;interval))
-ticker_payload:`method`params!("subscribe";`channel`symbol!("ticker";currencies))
+url:.conf.KRAKEN_URL;
+header:"GET ",.conf.KRAKEN_ENDPOINT," HTTP/1.1\r\nHost: ws.kraken.com\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n"
+UN:"," vs .conf.KRAKEN_UNIVERSE
+INT:.conf.KRAKEN_INTERVAL
+CHANNEL:.conf.KRAKEN_CHANNEL
+
+getParams:{
+    $[CHANNEL like "ohlc";:`channel`symbol`interval!(CHANNEL;UN;INT);
+        CHANNEL like "trade";:`channel`symbol`snapshot!(CHANNEL;UN;.conf.snapshot);
+        :`channel`symbol!(CHANNEL;UN)]
+    }
+payload:`method`params!("subscribe";getParams[])
 
 H:0Ni;
 
@@ -31,11 +33,13 @@ H:0Ni;
         if[x[`channel] like "status";
             -1 "qi.kraken: Status received. System is ", first x[`data]`system;
             :neg[.z.w] .j.j payload];
-        if[x[`channel] like "ohlc";
-            :neg[H](`.u.upd;`$x[`channel];nn:norm.OHLC x[`data])]
+        if[x[`channel] like CHANNEL;
+            :neg[H](`.u.upd;`$x[`channel];norm.OHLC x[`data])]
         ];
         }each enlist pkg
     }
+
+pc:{[h] if[h=H;.log.fatal"Lost connection to target. Exiting"]}
 
 start:{[target]
     if[null H::.ipc.conn .qi.tosym target;
@@ -49,3 +53,5 @@ start:{[target]
                 .log.info"Try setting the env variable:\nexport SSL_VERIFY_SERVER=NO"]]];
     if[h;.log.info"Connection success"];
     }
+
+.event.addhandler[`.z.pc;`.kraken.pc]

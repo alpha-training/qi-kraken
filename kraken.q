@@ -12,13 +12,13 @@
 / Connection Logic
 url:.conf.KRAKEN_URL;
 header:"GET ",.conf.KRAKEN_ENDPOINT," HTTP/1.1\r\nHost: ws.kraken.com\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n"
-UN:"," vs .conf.KRAKEN_UNIVERSE
+UN:.conf.KRAKEN_UNIVERSE
 INT:.conf.KRAKEN_INTERVAL
 CHANNEL:.conf.KRAKEN_CHANNEL
 
 getParams:{
     $[CHANNEL like "ohlc";:`channel`symbol`interval!(CHANNEL;UN;INT);
-        CHANNEL like "trade";:`channel`symbol`snapshot!(CHANNEL;UN;.conf.snapshot);
+        CHANNEL like "ticker";:`channel`symbol`snapshot!(CHANNEL;UN;.conf.snapshot);
         :`channel`symbol!(CHANNEL;UN)]
     }
 payload:`method`params!("subscribe";getParams[])
@@ -34,7 +34,7 @@ H:0Ni;
             -1 "qi.kraken: Status received. System is ", first x[`data]`system;
             :neg[.z.w] .j.j payload];
         if[x[`channel] like CHANNEL;
-            :neg[H](`.u.upd;`$x[`channel];.kraken.norm[`$CHANNEL] x[`data])]
+            :neg[H](`.u.upd;.kraken.norm.name `$CHANNEL;.kraken.norm[`$CHANNEL] x[`data])]
         ];
         }each enlist pkg
     }

@@ -1,5 +1,10 @@
 \d .kraken
 
+norm.name:{
+    if[`ticker=x;:`KrakenTicker];
+    if[`ohlc=x;:`KrakenBars]
+    }
+
 norm.ticker:{
     d:@[x;`symbol;`$];
         (d`symbol;

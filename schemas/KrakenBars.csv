@@ -7,5 +7,5 @@ close,f
 trades,j
 volume,f
 vwap,f
-interval_begin,p
+bar,p
 interval,j

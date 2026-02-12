@@ -31,9 +31,9 @@ norm.ohlc:{
                 d`high;
                 d`low;
                 d`close;
-                d`trades;
+                "j"$d[`trades];
                 d`volume;
                 d`vwap;
                 d`interval_begin;
-                d`interval)
+                "j"$d[`interval])
     }

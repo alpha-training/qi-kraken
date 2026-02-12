@@ -22,7 +22,7 @@ getParams:{[x]
         params:`channel`symbol!(x;UN)];
     `method`params!("subscribe";params)
     }
-payload:getParams each CHANNEL
+payload:getParams each $[0=type CHANNEL;CHANNEL;enlist CHANNEL]
 
 H:0Ni;
 

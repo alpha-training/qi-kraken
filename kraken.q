@@ -16,12 +16,13 @@ UN:.conf.KRAKEN_UNIVERSE
 INT:.conf.KRAKEN_INTERVAL
 CHANNEL:.conf.KRAKEN_CHANNEL
 
-getParams:{
-    $[CHANNEL like "ohlc";:`channel`symbol`interval!(CHANNEL;UN;INT);
-        CHANNEL like "ticker";:`channel`symbol`snapshot!(CHANNEL;UN;.conf.snapshot);
-        :`channel`symbol!(CHANNEL;UN)]
+getParams:{[x] 
+    $[x like "ohlc";params:`channel`symbol`interval!(x;UN;INT);
+        x like "trade";params:`channel`symbol`snapshot!(x;UN;.conf.snapshot);
+        params:`channel`symbol!(x;UN)];
+    `method`params!("subscribe";params)
     }
-payload:`method`params!("subscribe";getParams[])
+payload:getParams each CHANNEL
 
 H:0Ni;
 
@@ -32,9 +33,9 @@ H:0Ni;
     {if[`channel in key x;
         if[x[`channel] like "status";
             -1 "qi.kraken: Status received. System is ", first x[`data]`system;
-            :neg[.z.w] .j.j payload];
-        if[x[`channel] like CHANNEL;
-            :neg[H](`.u.upd;.kraken.norm.name `$CHANNEL;.kraken.norm[`$CHANNEL] x[`data])]
+            :neg[.z.w] each .j.j each payload];
+        if[any CHANNEL like x[`channel];
+            :neg[H](`.u.upd;.kraken.norm.name `$x[`channel];.kraken.norm[`$x[`channel]] x[`data])]
         ];
         }each enlist pkg
     }

@@ -7,7 +7,8 @@ norm.name:{
 
 norm.ticker:{
     d:@[x;`symbol;`$];
-        (d`symbol;
+        (enlist .z.n;
+            d`symbol;
             d`bid;
             d`bid_qty;
             d`ask;

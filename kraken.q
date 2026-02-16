@@ -5,9 +5,14 @@
 .qi.import`log
 .qi.frompkg[`kraken;`norm]
 
+`KrakenBars set `.kraken.KrakenBars
+`KrakenTicker set `.kraken.KrakenTicker
+
 / export SSL_CA_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt
 
 \d .kraken
+
+.qi.loadschemas`kraken
 
 / Connection Logic
 url:.conf.KRAKEN_URL;
@@ -28,6 +33,14 @@ H:0Ni;
 
 / Kraken Data Handler
 
+sendtotp:{[t;dt] neg[H](`.u.upd;t;dt)}
+
+insertlocal:{[t;dt]
+    if[`KrakenBars~t;(t:`.kraken.KrakenBars) insert dt];
+    if[`KrakenTicker~t;(t:`.kraken.KrakenTicker) insert dt];
+    if[not`g=attr get[t]`sym;update `g#sym from t]
+    }
+
 .z.ws:{[msg]
     pkg:.j.k msg;
     {if[`channel in key x;
@@ -35,7 +48,10 @@ H:0Ni;
             -1 "qi.kraken: Status received. System is ", first x[`data]`system;
             :neg[.z.w] each .j.j each payload];
         if[any CHANNEL like x[`channel];
-            :neg[H](`.u.upd;.kraken.norm.name `$x[`channel];.kraken.norm[`$x[`channel]] x[`data])]
+            t:.kraken.norm.name `$x[`channel];
+            dt:.kraken.norm[`$x[`channel]] x[`data];
+            $[.qi.isproc;sendtotp[t;dt];insertlocal[t;dt]]
+            ];
         ];
         }each enlist pkg
     }
@@ -43,9 +59,10 @@ H:0Ni;
 pc:{[h] if[h=H;.log.fatal"Lost connection to target. Exiting"]}
 
 start:{[target]
-    if[null H::.ipc.conn .qi.tosym target;
-        if[null H::first c:.ipc.tryconnect target;
-            .log.fatal"Could not connect to ",.qi.tostr[target]," '",last[c],"'. Exiting"]];
+    if[.qi.isproc;
+        if[null H::.ipc.conn .qi.tosym target;
+            if[null H::first c:.ipc.tryconnect target;
+                .log.fatal"Could not connect to ",.qi.tostr[target]," '",last[c],"'. Exiting"]];]
     .log.info "Connection sequence initiated...";
     if[not h:first c:.qi.try[url;header;0Ni];
         .log.error err:c 2;
@@ -56,3 +73,7 @@ start:{[target]
     }
 
 .event.addhandler[`.z.pc;`.kraken.pc]
+
+/
+
+if[not .qi.isproc;t insert x;if[not`g=attr get[t]`sym;update `g#sym from t]]

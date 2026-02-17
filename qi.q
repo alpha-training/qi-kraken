@@ -1,1 +1,0 @@
-/home/pmorris/qi/qi.q

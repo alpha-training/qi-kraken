@@ -2,7 +2,6 @@
 
 / Import libraries
 .qi.import`ipc
-.qi.import`log
 .qi.frompkg[`kraken;`norm]
 
 `KrakenBars set `.kraken.KrakenBars
@@ -56,20 +55,20 @@ insertlocal:{[t;dt]
         }each enlist pkg
     }
 
-pc:{[h] if[h=H;.log.fatal"Lost connection to target. Exiting"]}
+pc:{[h] if[h=H;.qi.fatal"Lost connection to target. Exiting"]}
 
 start:{[target]
     if[.qi.isproc;
         if[null H::.ipc.conn .qi.tosym target;
             if[null H::first c:.ipc.tryconnect target;
-                .log.fatal"Could not connect to ",.qi.tostr[target]," '",last[c],"'. Exiting"]];]
-    .log.info "Connection sequence initiated...";
+                .qi.fatal"Could not connect to ",.qi.tostr[target]," '",last[c],"'. Exiting"]];]
+    .qi.info "Connection sequence initiated...";
     if[not h:first c:.qi.try[url;header;0Ni];
-        .log.error err:c 2;
+        .qi.error err:c 2;
         if[err like"*Protocol*";
             if[.z.o in`l64`m64;
-                .log.info"Try setting the env variable:\nexport SSL_VERIFY_SERVER=NO"]]];
-    if[h;.log.info"Connection success"];
+                .qi.info"Try setting the env variable:\nexport SSL_VERIFY_SERVER=NO"]]];
+    if[h;.qi.info"Connection success"];
     }
 
 .event.addhandler[`.z.pc;`.kraken.pc]

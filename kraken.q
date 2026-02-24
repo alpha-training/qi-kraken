@@ -3,15 +3,16 @@
 / Import libraries
 .qi.import`ipc
 .qi.frompkg[`kraken;`norm]
+.qi.loadschemas`kraken
 
-`KrakenBars set `.kraken.KrakenBars
-`KrakenTicker set `.kraken.KrakenTicker
+/`KrakenBars set `.kraken.KrakenBars
+/`KrakenTicker set `.kraken.KrakenTicker
 
 / export SSL_CA_CERT_FILE=/etc/pki/tls/certs/ca-bundle.crt
 
 \d .kraken
 
-.qi.loadschemas`kraken
+/.qi.loadschemas`kraken
 
 / Connection Logic
 url:.conf.KRAKEN_URL;
@@ -35,8 +36,9 @@ H:0Ni;
 sendtotp:{[t;dt] neg[H](`.u.upd;t;dt)}
 
 insertlocal:{[t;dt]
-    if[`KrakenBars~t;(t:`.kraken.KrakenBars) insert dt];
-    if[`KrakenTicker~t;(t:`.kraken.KrakenTicker) insert dt];
+    /t insert dt;
+    if[`KrakenBars~t;(t:`KrakenBars) insert dt];
+    if[`KrakenTicker~t;(t:`KrakenTicker) insert dt];
     if[not`g=attr get[t]`sym;update `g#sym from t]
     }
 
@@ -57,7 +59,7 @@ insertlocal:{[t;dt]
 
 pc:{[h] if[h=H;.qi.fatal"Lost connection to target. Exiting"]}
 
-start:{[target]
+start::{[target]
     if[.qi.isproc;
         if[null H::.ipc.conn .qi.tosym target;
             if[null H::first c:.ipc.tryconnect target;

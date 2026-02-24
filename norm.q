@@ -24,7 +24,7 @@ norm.ticker:{
 
 norm.ohlc:{
     d:@[x;`symbol;`$];
-    d[`timestamp]:"N"$-1_'d[`timestamp];
+    d[`timestamp]:"P"$-1_'d[`timestamp];
     d[`interval_begin]:"P"$-1_'d[`interval_begin];
         (d`timestamp;
                 d`symbol;

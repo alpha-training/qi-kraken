@@ -61,7 +61,7 @@ pc:{[h] if[h=H;.qi.fatal"Lost connection to target. Exiting"]}
 
 start::{[target]
     if[.qi.isproc;
-        if[null H::.ipc.conn .qi.tosym target;
+        if[null H::.ipc.conn .qi.tosym target:.proc.self`depends_on;
             if[null H::first c:.ipc.tryconnect target;
                 .qi.fatal"Could not connect to ",.qi.tostr[target]," '",last[c],"'. Exiting"]];]
     .qi.info "Connection sequence initiated...";
